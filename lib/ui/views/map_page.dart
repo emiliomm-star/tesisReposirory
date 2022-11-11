@@ -1,5 +1,4 @@
 
-// @dart=2.9
 
 // ignore_for_file: unused_import, prefer_const_constructors, avoid_print, non_constant_identifier_names, avoid_unnecessary_containers, unused_local_variable, unused_element, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation
 
@@ -7,6 +6,8 @@ import 'dart:convert';
 import 'dart:html';
 
 
+import 'package:dijkstra/dijkstra.dart';
+//import 'package:directed_graph/directed_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/plugin_api.dart';
@@ -16,11 +17,12 @@ import 'package:geolocator/geolocator.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-import 'package:mapbox_directions/mapbox_directions.dart';
+//import 'package:mapbox_directions/mapbox_directions.dart';
 import 'package:provider/provider.dart';
-import 'package:ultimateproject/models/quicktype_models/mapbox_model_quicktype.dart';
 
 
+import '../../metoth/metodos_aux.dart';
+import '../../metoth/metodos_aux.dart';
 import '../../metoth/metodos_aux.dart';
 import '../../models/quicktype_models/polilines_provider.dart';
 import '../../services/puntos.dart';
@@ -30,7 +32,7 @@ import '../../services/puntos.dart';
 
 
 class MapPage extends StatefulWidget {
-  const MapPage({Key key}) : super(key: key);
+  const MapPage({Key? key}) : super(key: key);
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -41,6 +43,7 @@ class _MapPageState extends State<MapPage> {
 MapController mapController = MapController();
  
 LatLng _currentPosition = LatLng(0, 0);
+LatLng nodoFinal = LatLng(0, 0);
 
 //late LocationData _currentPosition;
 //Location location = Location();
@@ -62,6 +65,10 @@ List<CircleMarker> circles = [];
 
 Puntos aux = Puntos(listaPuntos: []);
 AuxMetoth metoths = AuxMetoth();
+
+var distance = DistanceHaversine();
+
+
 
 
 
@@ -195,6 +202,11 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
               }
               points.add(LatLng(_currentPosition.latitude, _currentPosition.longitude));
 
+
+              // Codigo de prueba de grafos
+
+              
+
               });
               print(points);
               //print(getCoordiantes_withLocation());
@@ -206,6 +218,8 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
 
                     FloatingActionButton(
                       onPressed: () async{
+
+
                         
                   /*    var url = Uri.https('api.mapbox.com/directions/v5/mapbox', 'driving/-82.463662%2C22.989493%3B-82.46568%2C22.990166%3B-82.46331%2C22.990569%3B-82.465004%2C22.992193%3B-82.46276%2C22.991559',{
                         'alternatives' : 'true',
@@ -228,110 +242,135 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
   print('Puntos mapbox' + mapboxModel.routes.first.legs.first.steps.first.intersections.first.location.toString());
    */                     
                         
-                        List<LatLng> copylist = points;
+                       List<LatLng> copylist = points;
                       
                         List<double> distancePoints = [];
 
                         List<int> visits = [];
 
-                        List result = [];
+                        List resultDistances = [];
                         
                         ultimate.add(copylist[0]);
+                         
                         
-                        var distance = DistanceHaversine();
+                       
 
                         for (var i = 0; i < points.length; i++) {
-                          if ( !visits.contains(points.indexOf(points[i]))) {
+                        
 
-                            for (var j = 0; j    < copylist.length   ;   j++) {
+                            for (var j = 0; j < copylist.length; j++) {
 
-                              if (distance   .as(LengthUnit.Meter, LatLng(points[i].latitude, points[i].longitude), LatLng(copylist[j].latitude, copylist[j].longitude)) == 0) {
+                              if (distance.as(LengthUnit.Meter, LatLng(points[i].latitude, points[i].longitude), LatLng(copylist[j].latitude, copylist[j].longitude)) == 0) {
                                 print('Calculando distancia de puntos iguales');
-                                
-                              } else {
-                                 
+                                if (!visits.contains(points.indexOf(points[i]))) {
+                                visits.add(points.indexOf(points[i]));
+                               }
+                              } 
+
+                             else if (visits.contains(copylist.indexOf(copylist[j]))) {
+                                print('Este punto ha sido visitado en copylist');
+                              } 
+                              else{
                              distancePoints.add(distance.as(LengthUnit.Meter, LatLng(points[i].latitude, points[i].longitude), LatLng(copylist[j].latitude, copylist[j].longitude)) );
                              print('Calculando distancia entre ${LatLng(points[i].latitude, points[i].longitude)} y el valor ${LatLng(copylist[j].latitude, copylist[j].longitude)}');
                             // var distanceBetweenPoints = SphericalUtil.computeDistanceBetween(LatLng(points[i].latitude, points[i].longitude), LatLng(copylist[j].latitude, copylist[j].longitude));
-                              print(distancePoints.toList()); // distancia en metros
-                               result = metoths.SearchMinor(distancePoints);
-                             print(result.toList()); // elemento - posicion
+                             print(distancePoints.toList()); // distancia en metros
+                               resultDistances = metoths.SearchMinor(distancePoints);
+                             print(resultDistances.toList()); // elemento - posicion
                               }
+                              
+                            
+                              
                        
                           }
-                           visits.add(result[1]+1);
+                          
+                           visits.add(points.indexOf(points[resultDistances[1]+1]));
                            print(visits.toList());
-
-                          if(!ultimate.contains((points[result[1]]))){
-                             ultimate.add(points[result[1]]);
-                          }
+ 
+                           ultimate.add(points[resultDistances[1]+1]);
+                          
+                           print('Lista definitiva : \n ${ultimate.toList()}');
                          
-                         ultimate.add(points[result[1]+1]);
-                          
-                          print('Lista definitiva : \n ${ultimate.toList()}');
-                            
+                           print(copylist.toList());
 
-                          //copylist.removeAt(result[1]);
-                          //print(copylist.toList());
+                           i = points.indexOf(points[resultDistances[1]+1])-1;
+                           while (resultDistances.isNotEmpty) {
+                            resultDistances.remove(resultDistances.first);
+                            }
+                            while (distancePoints.isNotEmpty) {
+                            distancePoints.remove(distancePoints.first);
+                            }
+                           print(distancePoints);
 
-                          i = points.indexOf(points[result[i]+1]);
-                          while (result.isNotEmpty) {
-                            result.remove(result.first);
-                          }
-                        //  print(result);
+                           print('Lista definitiva del algoritmo: \n ${ultimate.toList()}');
 
-                          }
-                          else{
-                            print('Este punto ya ha sido visitado');
+                           print(metoths.latlngMakeString(ultimate).toList());
 
-                          }
-                          
-
-                
-
-                      
-                          
-                          
-                          /*
-                          print('Primer punto de ultimate  ${ultimate[i].latitude.toString()},${ultimate[i].longitude.toString()}');
-                          print(' Segundo punto de ultimate  ${ultimate[i+1].latitude.toString()},${ultimate[i+1].longitude.toString()}');
-
-                         for (var i = 0; i < ultimate.length; i++) {
-
-
-                            var url = Uri.https('api.openrouteservice.org','v2/directions/driving-car',{
-
-                              
-
-                              'api_key' : '5b3ce3597851110001cf6248044385c88d0c461fbd9bf2fb1556f6dd',
-                              'start'   : '${ultimate[i].latitudeInRad.toString()},${ultimate[i].longitude.toString()}',
-                              'end'     : '${ultimate[i+1].latitude.toString()},${ultimate[i+1].longitude.toString()}',
-
-                          });
-
-                                       final response = await http.get(url);
-                            final decodedData = json.decode(response.body);
-                            final polylinePoints = PolilinesProvider.fromJson(decodedData as Map<String , dynamic>);
-                            var cordinates = polylinePoints.features.first.geometry!.coordinates;
-                             if (response.statusCode != 200) {
-                               print('error');
-                             } else {
-                              for (var i = 0; i < cordinates.length; i++) {
-                                
-                              }
-                               print(polylinePoints.features.first.geometry!.coordinates.toList());
-                               
-                             }
-                          }
-
-                               */
+                           if (visits.length == points.length) {
+                             break;
+                           }
+  
                         }
-                     //  await getPointsRoute();
-                              
 
+
+                    
+  
                       }
                       , 
                     child: Icon(Icons.arrow_upward),),
+
+                    SizedBox(height: 5,),
+
+                    FloatingActionButton(
+                      onPressed: ()async{
+
+                          var url = Uri.https('graphhopper.com', 'api/1/route',{
+                                  'key'            : '94e8d176-888f-48c0-9248-3381ce17ee57',
+                                  'point'          :  metoths.latlngMakeString(ultimate),          //['-51.131,12.414', '48.224,3.867'],
+                                  'profile'        : 'car',
+                                  'locale'         : 'de',
+                                 // 'calc_points'    : true,
+                                  'points_encoded' : 'false',
+                                  'optimize'       : 'true'
+
+                          });
+
+                          final response = await http.get(url);
+                          final decodedData = await json.decode(response.body);
+                          final polylinesPoints = PolilinesProvider.fromJson(decodedData as Map<String , dynamic>);
+
+                          if (response.statusCode != 200) {
+                             print('error'); 
+                           }
+                            
+                            print('Lista proveedora de puntos para polylines : \n'  +  '${polylinesPoints.paths.first.points!.coordinates.toList()}');
+
+                       /* Map<String, dynamic> payload = 
+                        {
+                        "coordinates" : [[8.681495,49.41461],[8.686507,49.41943],[8.687872,49.420318]]
+                      };
+                        
+                     var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car')   ;
+                     var response = await http.post(
+                      url,
+                      headers: {
+                        "Authorization" : "5b3ce3597851110001cf6248044385c88d0c461fbd9bf2fb1556f6dd",
+                        'Content-Type'  : 'application/json'
+                      },
+                      body: jsonEncode(payload)
+                      );
+
+                      if (response.statusCode == 200) {
+                       var jsonResponse = await json.decode(response.body);
+                        print(jsonResponse);
+                      }
+                      else{
+                        print('Algo salio mal');
+                      }*/
+
+                      },
+                      child: Icon(Icons.bedroom_child_outlined),
+                      ),
      
                    ],
                  ),
@@ -345,7 +384,7 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
    
   }
 
-        /*    Future<List<double>> getPointsRoute()async{
+         /*   Future<List<double>> getPointsRoute()async{
                           
                           
                          MBRoute().setApiToken('pk.eyJ1IjoidW5kZXJ0YWtlcnIiLCJhIjoiY2wyZGR6MXRsMGpxMTNic2FkcnI2aDN4OSJ9.n3Yn4OxeMxTR0_eRaw6-LA');

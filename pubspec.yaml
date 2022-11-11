@@ -46,7 +46,9 @@ dependencies:
   get: ^4.6.5
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  mapbox_directions: ^0.0.2+3
+  directed_graph: ^0.3.7
+  dijkstra: ^0.0.3
+# mapbox_directions: ^0.0.2+3
   
 
 dev_dependencies:

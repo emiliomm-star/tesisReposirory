@@ -1,289 +1,189 @@
 class PolilinesProvider {
     PolilinesProvider({
-        required this.type,
-        required this.features,
-        required this.bbox,
-        required this.metadata,
+        required this.hints,
+        required this.info,
+        required this.paths,
     });
 
-    final String? type;
-    final List<Feature> features;
-    final List<double> bbox;
-    final Metadata? metadata;
+    final Hints? hints;
+    final Info? info;
+    final List<Path> paths;
 
     factory PolilinesProvider.fromJson(Map<String, dynamic> json){ 
         return PolilinesProvider(
-        type: json["type"],
-        features: json["features"] == null ? [] : List<Feature>.from(json["features"]!.map((x) => Feature.fromJson(x))),
-        bbox: json["bbox"] == null ? [] : List<double>.from(json["bbox"]!.map((x) => x)),
-        metadata: json["metadata"] == null ? null : Metadata.fromJson(json["metadata"]),
+        hints: json["hints"] == null ? null : Hints.fromJson(json["hints"]),
+        info: json["info"] == null ? null : Info.fromJson(json["info"]),
+        paths: json["paths"] == null ? [] : List<Path>.from(json["paths"]!.map((x) => Path.fromJson(x))),
     );
     }
 
-    Map<String, dynamic> toJson() => {
-        "type": type,
-        "features": List<Feature>.from(features.map((x) => x.toJson())),
-        "bbox": List<double>.from(bbox.map((x) => x)),
-        "metadata": metadata?.toJson(),
-    };
+}
+
+class Hints {
+    Hints({
+        required this.visitedNodesSum,
+        required this.visitedNodesAverage,
+    });
+
+    final int? visitedNodesSum;
+    final int? visitedNodesAverage;
+
+    factory Hints.fromJson(Map<String, dynamic> json){ 
+        return Hints(
+        visitedNodesSum: json["visited_nodes.sum"],
+        visitedNodesAverage: json["visited_nodes.average"],
+    );
+    }
 
 }
 
-class Feature {
-    Feature({
+class Info {
+    Info({
+        required this.copyrights,
+        required this.took,
+    });
+
+    final List<String> copyrights;
+    final int? took;
+
+    factory Info.fromJson(Map<String, dynamic> json){ 
+        return Info(
+        copyrights: json["copyrights"] == null ? [] : List<String>.from(json["copyrights"]!.map((x) => x)),
+        took: json["took"],
+    );
+    }
+
+}
+
+class Path {
+    Path({
+        required this.distance,
+        required this.weight,
+        required this.time,
+        required this.transfers,
+        required this.pointsEncoded,
         required this.bbox,
-        required this.type,
-        required this.properties,
-        required this.geometry,
+        required this.points,
+        required this.instructions,
+        required this.legs,
+        required this.details,
+        required this.ascend,
+        required this.descend,
+        required this.snappedWaypoints,
     });
 
+    final double? distance;
+    final double? weight;
+    final int? time;
+    final int? transfers;
+    final bool? pointsEncoded;
     final List<double> bbox;
-    final String? type;
-    final Properties? properties;
-    final Geometry? geometry;
+    final Points? points;
+    final List<Instruction> instructions;
+    final List<dynamic> legs;
+    final Details? details;
+    final double? ascend;
+    final double? descend;
+    final Points? snappedWaypoints;
 
-    factory Feature.fromJson(Map<String, dynamic> json){ 
-        return Feature(
+    factory Path.fromJson(Map<String, dynamic> json){ 
+        return Path(
+        distance: json["distance"],
+        weight: json["weight"],
+        time: json["time"],
+        transfers: json["transfers"],
+        pointsEncoded: json["points_encoded"],
         bbox: json["bbox"] == null ? [] : List<double>.from(json["bbox"]!.map((x) => x)),
-        type: json["type"],
-        properties: json["properties"] == null ? null : Properties.fromJson(json["properties"]),
-        geometry: json["geometry"] == null ? null : Geometry.fromJson(json["geometry"]),
+        points: json["points"] == null ? null : Points.fromJson(json["points"]),
+        instructions: json["instructions"] == null ? [] : List<Instruction>.from(json["instructions"]!.map((x) => Instruction.fromJson(x))),
+        legs: json["legs"] == null ? [] : List<dynamic>.from(json["legs"]!.map((x) => x)),
+        details: json["details"] == null ? null : Details.fromJson(json["details"]),
+        ascend: json["ascend"],
+        descend: json["descend"],
+        snappedWaypoints: json["snapped_waypoints"] == null ? null : Points.fromJson(json["snapped_waypoints"]),
     );
     }
 
-    Map<String, dynamic> toJson() => {
-        "bbox": List<double>.from(bbox.map((x) => x)),
-        "type": type,
-        "properties": properties?.toJson(),
-        "geometry": geometry?.toJson(),
-    };
+}
+
+class Details {
+    Details();
+
+    factory Details.fromJson(Map<String, dynamic> json){ 
+        return Details(
+    );
+    }
 
 }
 
-class Geometry {
-    Geometry({
-        required this.coordinates,
-        required this.type,
+class Instruction {
+    Instruction({
+        required this.distance,
+        required this.heading,
+        required this.sign,
+        required this.interval,
+        required this.text,
+        required this.time,
+        required this.streetName,
+        required this.streetRef,
+        required this.streetDestination,
+        required this.streetDestinationRef,
+        required this.exitNumber,
+        required this.exited,
+        required this.turnAngle,
+        required this.lastHeading,
     });
 
-    final List<List<double>> coordinates;
+    final double? distance;
+    final double? heading;
+    final int? sign;
+    final List<int> interval;
+    final String? text;
+    final int? time;
+    final String? streetName;
+    final String? streetRef;
+    final String? streetDestination;
+    final String? streetDestinationRef;
+    final int? exitNumber;
+    final bool? exited;
+    final double? turnAngle;
+    final double? lastHeading;
+
+    factory Instruction.fromJson(Map<String, dynamic> json){ 
+        return Instruction(
+        distance: json["distance"],
+        heading: json["heading"],
+        sign: json["sign"],
+        interval: json["interval"] == null ? [] : List<int>.from(json["interval"]!.map((x) => x)),
+        text: json["text"],
+        time: json["time"],
+        streetName: json["street_name"],
+        streetRef: json["street_ref"],
+        streetDestination: json["street_destination"],
+        streetDestinationRef: json["street_destination_ref"],
+        exitNumber: json["exit_number"],
+        exited: json["exited"],
+        turnAngle: json["turn_angle"],
+        lastHeading: json["last_heading"],
+    );
+    }
+
+}
+
+class Points {
+    Points({
+        required this.type,
+        required this.coordinates,
+    });
+
     final String? type;
-
-    factory Geometry.fromJson(Map<String, dynamic> json){ 
-        return Geometry(
-        coordinates: json["coordinates"] == null ? [] : List<List<double>>.from(json["coordinates"]!.map((x) => x == null ? [] : List<double>.from(x!.map((x) => x)))),
-        type: json["type"],
-    );
-    }
-
-    Map<String, dynamic> toJson() => {
-        "coordinates": List<List<double>>.from(coordinates.map((x) => List<double>.from(x.map((x) => x)))),
-        "type": type,
-    };
-
-}
-
-class Properties {
-    Properties({
-        required this.segments,
-        required this.summary,
-        required this.wayPoints,
-    });
-
-    final List<Segment> segments;
-    final Summary? summary;
-    final List<int> wayPoints;
-
-    factory Properties.fromJson(Map<String, dynamic> json){ 
-        return Properties(
-        segments: json["segments"] == null ? [] : List<Segment>.from(json["segments"]!.map((x) => Segment.fromJson(x))),
-        summary: json["summary"] == null ? null : Summary.fromJson(json["summary"]),
-        wayPoints: json["way_points"] == null ? [] : List<int>.from(json["way_points"]!.map((x) => x)),
-    );
-    }
-
-    Map<String, dynamic> toJson() => {
-        "segments": List<Segment>.from(segments.map((x) => x.toJson())),
-        "summary": summary?.toJson(),
-        "way_points": List<int>.from(wayPoints.map((x) => x)),
-    };
-
-}
-
-class Segment {
-    Segment({
-        required this.distance,
-        required this.duration,
-        required this.steps,
-    });
-
-    final double? distance;
-    final int? duration;
-    final List<Step> steps;
-
-    factory Segment.fromJson(Map<String, dynamic> json){ 
-        return Segment(
-        distance: json["distance"],
-        duration: json["duration"],
-        steps: json["steps"] == null ? [] : List<Step>.from(json["steps"]!.map((x) => Step.fromJson(x))),
-    );
-    }
-
-    Map<String, dynamic> toJson() => {
-        "distance": distance,
-        "duration": duration,
-        "steps": List<Step>.from(steps.map((x) => x.toJson())),
-    };
-
-}
-
-class Step {
-    Step({
-        required this.distance,
-        required this.duration,
-        required this.type,
-        required this.instruction,
-        required this.name,
-        required this.wayPoints,
-    });
-
-    final double? distance;
-    final double? duration;
-    final int? type;
-    final String? instruction;
-    final String? name;
-    final List<int> wayPoints;
-
-    factory Step.fromJson(Map<String, dynamic> json){ 
-        return Step(
-        distance: json["distance"],
-        duration: json["duration"],
-        type: json["type"],
-        instruction: json["instruction"],
-        name: json["name"],
-        wayPoints: json["way_points"] == null ? [] : List<int>.from(json["way_points"]!.map((x) => x)),
-    );
-    }
-
-    Map<String, dynamic> toJson() => {
-        "distance": distance,
-        "duration": duration,
-        "type": type,
-        "instruction": instruction,
-        "name": name,
-        "way_points": List<int>.from(wayPoints.map((x) => x)),
-    };
-
-}
-
-class Summary {
-    Summary({
-        required this.distance,
-        required this.duration,
-    });
-
-    final double? distance;
-    final int? duration;
-
-    factory Summary.fromJson(Map<String, dynamic> json){ 
-        return Summary(
-        distance: json["distance"],
-        duration: json["duration"],
-    );
-    }
-
-    Map<String, dynamic> toJson() => {
-        "distance": distance,
-        "duration": duration,
-    };
-
-}
-
-class Metadata {
-    Metadata({
-        required this.attribution,
-        required this.service,
-        required this.timestamp,
-        required this.query,
-        required this.engine,
-    });
-
-    final String? attribution;
-    final String? service;
-    final int? timestamp;
-    final Query? query;
-    final Engine? engine;
-
-    factory Metadata.fromJson(Map<String, dynamic> json){ 
-        return Metadata(
-        attribution: json["attribution"],
-        service: json["service"],
-        timestamp: json["timestamp"],
-        query: json["query"] == null ? null : Query.fromJson(json["query"]),
-        engine: json["engine"] == null ? null : Engine.fromJson(json["engine"]),
-    );
-    }
-
-    Map<String, dynamic> toJson() => {
-        "attribution": attribution,
-        "service": service,
-        "timestamp": timestamp,
-        "query": query?.toJson(),
-        "engine": engine?.toJson(),
-    };
-
-}
-
-class Engine {
-    Engine({
-        required this.version,
-        required this.buildDate,
-        required this.graphDate,
-    });
-
-    final String? version;
-    final DateTime? buildDate;
-    final DateTime? graphDate;
-
-    factory Engine.fromJson(Map<String, dynamic> json){ 
-        return Engine(
-        version: json["version"],
-        buildDate: json["build_date"] == null ? null : DateTime.parse(json["build_date"]),
-        graphDate: json["graph_date"] == null ? null : DateTime.parse(json["graph_date"]),
-    );
-    }
-
-    Map<String, dynamic> toJson() => {
-        "version": version,
-        "build_date": buildDate?.toIso8601String(),
-        "graph_date": graphDate?.toIso8601String(),
-    };
-
-}
-
-class Query {
-    Query({
-        required this.coordinates,
-        required this.profile,
-        required this.format,
-    });
-
     final List<List<double>> coordinates;
-    final String? profile;
-    final String? format;
 
-    factory Query.fromJson(Map<String, dynamic> json){ 
-        return Query(
+    factory Points.fromJson(Map<String, dynamic> json){ 
+        return Points(
+        type: json["type"],
         coordinates: json["coordinates"] == null ? [] : List<List<double>>.from(json["coordinates"]!.map((x) => x == null ? [] : List<double>.from(x!.map((x) => x)))),
-        profile: json["profile"],
-        format: json["format"],
     );
     }
-
-    Map<String, dynamic> toJson() => {
-        "coordinates": List<List<double>>.from(coordinates.map((x) => List<double>.from(x.map((x) => x)))),
-        "profile": profile,
-        "format": format,
-    };
 
 }
