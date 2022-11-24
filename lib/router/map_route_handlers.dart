@@ -2,7 +2,7 @@
 
 
 
-// ignore_for_file: import_of_legacy_library_into_null_safe
+// ignore_for_file: import_of_legacy_library_into_null_safe, prefer_const_constructors
 
 import 'package:fluro/fluro.dart';
 import 'package:provider/provider.dart';

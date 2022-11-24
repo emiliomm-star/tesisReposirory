@@ -2,6 +2,7 @@
 // ignore_for_file: use_key_in_widget_constructors, curly_braces_in_flow_control_structures, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ultimateproject/models/hiveModels/hive_chofer_model.dart';
@@ -16,6 +17,7 @@ import 'package:ultimateproject/ui/layouts/dashboard/dashboard_layout.dart';
 import 'package:ultimateproject/ui/layouts/splash/splash_layout.dart';
 
 import 'models/hiveModels/hive_director_model.dart';
+import 'models/hiveModels/hive_tarea_model.dart';
  
 void main()async{
 
@@ -25,6 +27,7 @@ void main()async{
   Hive.registerAdapter(DirectorModelAdapter());
   Hive.registerAdapter(VehiculoModelAdapter());
   Hive.registerAdapter(ReporteModelAdapter());
+  Hive.registerAdapter(TareaAdapter());
 
  await LocalStorage.configurePrefs();
   Flurorouter.configureRoutes();
@@ -46,7 +49,7 @@ class AppState extends StatelessWidget {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UCI- Servicio Comunales',
       initialRoute: '/',

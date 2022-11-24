@@ -3,7 +3,9 @@
 import 'package:fluro/fluro.dart';
 import 'package:ultimateproject/router/chofer_list_handler.dart';
 import 'package:ultimateproject/router/report_handlers.dart';
-import 'package:ultimateproject/ui/views/chofer_page.dart';
+import 'package:ultimateproject/router/tareas_list_handlers.dart';
+import 'package:ultimateproject/router/update_handlers.dart';
+import 'package:ultimateproject/router/vehiculo_list_handlers.dart';
 
 
 import 'admin_handlers.dart';
@@ -44,11 +46,21 @@ class Flurorouter {
   //ChoferList
   static String choferListRoute= '/dashboard/choferList';
 
+  //TareasList
+  static String tareasListRoute= '/dashboard/tareasList';
+
+  //TareasList
+  static String vehiculosListRoute= '/dashboard/vehiculosList';
+
   //ChoferPage
   static String choferPagee= '/dashboardChofer';
  
   //MapRoute
   static String mapRoute= '/dashboardChofer/mapRoute';
+
+  //UpdatePage
+  static String updatePage ='/dashboardChofer/updatePage';
+
 
   static void configureRoutes() {
     // Auth Routes
@@ -74,15 +86,23 @@ class Flurorouter {
      // Chofer List
     router.define(choferListRoute, handler: choferListHandlers.choferList, transitionType: TransitionType.none );
     
+     // Tarea List
+    router.define(tareasListRoute, handler: TareaListHandlers.tareaList, transitionType: TransitionType.none );
+
+     // Vehiculo List
+    router.define(vehiculosListRoute, handler: VehiculoListHandlers.vehiculoList, transitionType: TransitionType.none );
+
     // Report
     router.define(report, handler: ReportHandlers.report, transitionType: TransitionType.none );
 
     // Chofer Page
     router.define(choferPagee, handler: ChoferPageHandlers.chofer, transitionType: TransitionType.none );
 
-    // Chofer Page
+    // Map Page
     router.define(mapRoute, handler: MapPageHandlers.map, transitionType: TransitionType.none );
 
+    // Update Page
+    router.define(updatePage, handler: Updatehandlers.udpate, transitionType: TransitionType.none );
   }
   
 

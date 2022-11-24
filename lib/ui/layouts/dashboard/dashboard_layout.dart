@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ultimateproject/ui/views/dashboard_view.dart';
-import 'package:ultimateproject/ui/views/gestioanr_chofer.dart';
-import 'package:ultimateproject/ui/views/gestionar_tarea_page.dart';
-import 'package:ultimateproject/ui/views/gestionar_vehiculo.dart';
+import 'package:ultimateproject/ui/views/chofer/gestioanr_chofer.dart';
+import 'package:ultimateproject/ui/views/tarea/gestionar_tarea_page.dart';
+import 'package:ultimateproject/ui/views/vehiculo/gestionar_vehiculo.dart';
 
 import '../../shared/sidebar.dart';
 
@@ -22,7 +22,7 @@ class DashboardLayout extends StatelessWidget {
           //TODO esto si es mas  de 700px
           
 
-          Expanded(
+         Expanded(
             child: child,
             )
 

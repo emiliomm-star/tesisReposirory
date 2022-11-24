@@ -2,7 +2,7 @@
 
 import 'package:fluro/fluro.dart';
 import 'package:provider/provider.dart';
-import 'package:ultimateproject/ui/views/listado_page.dart';
+import 'package:ultimateproject/ui/views/chofer/listado_page.dart';
 
 import '../providers/auth_providers.dart';
 import '../ui/views/login_view.dart';

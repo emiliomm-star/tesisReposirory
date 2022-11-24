@@ -1,74 +1,68 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_final_fields, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace
+// ignore_for_file: body_might_complete_normally_nullable
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ultimateproject/models/hiveModels/hive_chofer_model.dart';
-import 'package:ultimateproject/providers/hive_providers/chofer_provider.dart';
+import 'package:ultimateproject/models/hiveModels/hive_reporte_model.dart';
 import 'package:ultimateproject/router/router.dart';
-import 'package:ultimateproject/ui/views/chofer_page.dart';
+import 'package:ultimateproject/services/navigation-services.dart';
 
-class GestionarChofer extends StatefulWidget {
+import '../../../providers/hive_providers/report_provider.dart';
+
+class MostrarReportes extends StatefulWidget {
 
   @override
-  State<GestionarChofer> createState() => _GestionarChoferState();
+  State<MostrarReportes> createState() => _MostrarReportesState();
 }
 
-class _GestionarChoferState extends State<GestionarChofer> {
+class _MostrarReportesState extends State<MostrarReportes> {
 
-final TextEditingController name_controller = TextEditingController();
-final TextEditingController ci_controller   = TextEditingController();
-final TextEditingController job_controller  = TextEditingController();
+  var _formKey =  GlobalKey<FormState>();
 
+  final TextEditingController autor_controller = TextEditingController();
+  final TextEditingController report_controller   = TextEditingController();
 
-final TextEditingController delete_controller  = TextEditingController();
-final TextEditingController buscar_controller  = TextEditingController();
+  final TextEditingController delete_controller = TextEditingController();
+  final TextEditingController buscar_controller = TextEditingController();
 
-List<Chofer> listaChoferes = [];
+  List<ReporteModel> listReportes = [];
 
-ChoferOperations choferOperations = ChoferOperations();
-
- var _formKey =  GlobalKey<FormState>();
-
+  ReportProvider reportProvider = ReportProvider();
 
   @override
   void initState() {
     getData();
-
     super.initState();
-
-  
-
-
-
     
   }
 
-  @override
+@override
   void dispose() {
+    autor_controller.dispose();
+    report_controller.dispose();
+    delete_controller.dispose();
+    buscar_controller.dispose();
     super.dispose();
-  ci_controller.dispose();
-  name_controller.dispose();
-  job_controller.dispose();
-  delete_controller.dispose();
-  buscar_controller.dispose();
   }
 
   Future<void> getData()async{
-    listaChoferes = await choferOperations.choferesList;
+    listReportes = await reportProvider.reportesList;
 
    // setState(() {});
 
   }
 
 
-
-
   @override
   Widget build(BuildContext context) {
+
     
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gestionar Chofer'),
+        leading: IconButton(onPressed: (){
+          NavigationServices.navigateTo(Flurorouter.mapRoute);
+        }, 
+        icon: Icon(Icons.map_outlined)
+        ),
+        
         actions: [
           Row(
             children: [
@@ -78,7 +72,7 @@ ChoferOperations choferOperations = ChoferOperations();
                 ),
                 IconButton(
                 onPressed: (){
-                  showCupertinoDialog(
+                  showDialog(
                     context: context, 
                     builder: (context){
                       return AlertDialog(
@@ -98,7 +92,7 @@ ChoferOperations choferOperations = ChoferOperations();
                                 controller: buscar_controller,
                                 
                                 decoration: InputDecoration(
-                                      labelText: 'CI-CHOFER',
+                                      labelText: 'Autor',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(20))
                                       )
@@ -108,8 +102,8 @@ ChoferOperations choferOperations = ChoferOperations();
                               Row(
                                 children: [
                                    ElevatedButton.icon(onPressed: (){
-                                     for (var i = 0; i < listaChoferes.length; i++) {
-                                        if (listaChoferes[i].ci == buscar_controller.text) {
+                                     for (var i = 0; i < listReportes.length; i++) {
+                                        if (listReportes[i].autor == buscar_controller.text) {
                                           showDialog(
                                             context: context, 
                                             builder: (context){
@@ -117,9 +111,8 @@ ChoferOperations choferOperations = ChoferOperations();
                                                     title: Center(
                                                       child: Column(
                                                         children: [
-                                                          Center(child:Text('Nombre-Chofer        : ${listaChoferes[i].name}'),),
-                                                          Center(child:Text('Numero-identidad     : ${listaChoferes[i].ci}'),),
-                                                          Center(child:Text('Zona                 : ${listaChoferes[i].job}'),),
+                                                          Center(child:Text('Nombre-autor        : ${listReportes[i].autor}'),),
+                                                          Center(child:Text('reporte     :  \n \n ${listReportes[i].text}'),),
 
                                                           SizedBox(height: 10,),
                                                           ElevatedButton(
@@ -163,7 +156,11 @@ ChoferOperations choferOperations = ChoferOperations();
             ],
           )
         ],
-      ),
+        ),
+        
+          
+        
+      
       body: Column(
         children: [
           SingleChildScrollView(
@@ -177,77 +174,34 @@ ChoferOperations choferOperations = ChoferOperations();
                       SizedBox(height: 30,),
                       
                       TextFormField(
-                        controller: name_controller,
-                        keyboardType: TextInputType.name,
-                        textCapitalization: TextCapitalization.words,
-                        textInputAction: TextInputAction.next,
+                        controller: autor_controller,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             
                           ),
-                          hintText: 'Nombre y Apellidos', 
+                          hintText: 'Nombre-Chofer+', 
                           hintStyle: TextStyle(color: Colors.grey.withOpacity(0.8)),
-                          labelText: 'Nombre - Apellidos',
+                          labelText: 'Autor',
                           icon: Icon(Icons.person),
                         ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'No deje campos vacios';
-                          }
-                        },
                       ),
 
                       SizedBox(
                         height: 20,
                       ),
                       TextFormField(
-                        controller: ci_controller,
-                         keyboardType: TextInputType.number,
-                        textCapitalization: TextCapitalization.words,
-                        textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            
-                          ),
-                          hintText: 'CI', 
-                          hintStyle: TextStyle(color: Colors.grey.withOpacity(0.8)),
-                          labelText: 'CI',
-                          icon: Icon(Icons.numbers),
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'No deje campos vacios';
-                          }
-                        },
-                        
-                      ),
-                      SizedBox(height: 20,),
-                      TextFormField(
-                        controller: job_controller,
-                         keyboardType: TextInputType.name,
-                        textCapitalization: TextCapitalization.words,
-                        textInputAction: TextInputAction.next,
+                        controller: report_controller,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             
                           ),
-                          hintText: 'Zona-Manzana', 
+                          hintText: 'Cuerpo-Reporte', 
                           hintStyle: TextStyle(color: Colors.grey.withOpacity(0.8)),
-                          labelText: 'Tarea',
-                          icon: Icon(Icons.alt_route_outlined),
+                          labelText: 'Reporte',
+                          icon: Icon(Icons.report_problem),
                         ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'No deje campos vacios';
-                          }
-                        },
-                      ),
-
-                      SizedBox(
-                        height: 20,
                       ),
                     ],
                   ),
@@ -260,30 +214,29 @@ ChoferOperations choferOperations = ChoferOperations();
             padding: EdgeInsets.only(left: 400),
             child: Row(
               children: [
-                ElevatedButton.icon(onPressed: () async{
+                ElevatedButton.icon(onPressed: ()async{
 
-                 if (_formKey.currentState!.validate()) {
-                    
-                  await choferOperations.saveChofer(Chofer(ci: ci_controller.text, name: name_controller.text, job: job_controller.text));
-                  //Mostrar una notificacion especificando q el chofer se creo correctamente
-                 }
-                 else{
-                  print('Datos de chofer incorrectos');
-                 }
-                 await getData();
-               //  print(listaChoferes.toList());
-                
-               
-               
+                  if (_formKey.currentState!.validate()) {
+                    await reportProvider.saveReport(ReporteModel(autor: autor_controller.text, text: report_controller.text));
+
+                    getData();
+                      setState(() {
+                         autor_controller.text = '' ;
+                         report_controller.text = '';
+                      });
+                  }
+
+
+
 
                 }, 
-                  icon: Icon(Icons.add),
-                  label: Text('ADD')),
-
+                icon: Icon(Icons.add), 
+                label: Text('ADD')
+                ),
                 SizedBox(width: 130,),
-
+                
                 ElevatedButton.icon(onPressed: ()async{
-                  showCupertinoDialog(
+                    showDialog(
                     context: context, 
                     builder: (context){
                       return AlertDialog(
@@ -293,14 +246,12 @@ ChoferOperations choferOperations = ChoferOperations();
                               TextFormField(
                                 validator: ((value) {
                                   if (value == null || value == '') {
-                                    return 'Ingrese un ci';
+                                    return 'Ingrese un autor de reporte';
                                   }
-                                  if (value.length != 11) {
-                                    return 'El numero de indentidad consta de 11 digitos';
-                                  }                                }),
+                               }),
                                 controller: delete_controller,
                                 decoration: InputDecoration(
-                                      labelText: 'CI-CHOFER',
+                                      labelText: 'Autor-Reporte',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(20))
                                       )
@@ -311,9 +262,9 @@ ChoferOperations choferOperations = ChoferOperations();
                                 children: [
                                   ElevatedButton.icon(onPressed: ()async{
                                     // Buscar en hive el chofer por CI y eliminar
-                                   for (var i = 0; i < listaChoferes.length; i++) {
-                                     if (listaChoferes[i].ci == delete_controller.text) {
-                                       await listaChoferes[i].delete();
+                                   for (var i = 0; i < listReportes.length; i++) {
+                                     if (listReportes[i].autor == delete_controller.text) {
+                                       await listReportes[i].delete();
                                        getData();
                                        delete_controller.text = '';
                                        
@@ -335,18 +286,8 @@ ChoferOperations choferOperations = ChoferOperations();
                     }
                   );
                 }, 
-                   icon: Icon(Icons.delete), 
-                   label: Text('DELETE')),
-
-                 SizedBox(width: 130,),
-
-                 ElevatedButton.icon(
-                  onPressed: (){
-                    Navigator.pushNamed(context, Flurorouter.choferListRoute);
-                  }, 
-                  icon: Icon(Icons.list), 
-                  label: Text('Listar')
-                  ),  
+                icon: Icon(Icons.delete), 
+                label: Text('DELETE')),
                 
                 
               ],          
@@ -354,13 +295,13 @@ ChoferOperations choferOperations = ChoferOperations();
           )
         ],
       ),
+      
     );
+    
   }
-//Despues de insertar deja los campos te texto en blanco
-  void clear() {
-    name_controller.text = '' ;
-    ci_controller.text = '';
-    job_controller.text = '';
+   void clear() {
+    autor_controller.text = '' ;
+    report_controller.text = '';
     setState(() {
       
     });

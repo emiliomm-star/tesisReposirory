@@ -1,12 +1,11 @@
 
 
-// ignore_for_file: unused_import, prefer_const_constructors, avoid_print, non_constant_identifier_names, avoid_unnecessary_containers, unused_local_variable, unused_element, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation
+// ignore_for_file: unused_import, prefer_const_constructors, avoid_print, non_constant_identifier_names, avoid_unnecessary_containers, unused_local_variable, unused_element, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation, depend_on_referenced_packages, prefer_interpolation_to_compose_strings
 
 import 'dart:convert';
 //import 'dart:html';
 
 
-import 'package:dijkstra/dijkstra.dart';
 //import 'package:directed_graph/directed_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,8 +20,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 
-import '../../metoth/metodos_aux.dart';
-import '../../metoth/metodos_aux.dart';
 import '../../metoth/metodos_aux.dart';
 import '../../models/quicktype_models/polilines_provider.dart';
 import '../../services/puntos.dart';

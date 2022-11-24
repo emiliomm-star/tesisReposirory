@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ultimateproject/models/hiveModels/hive_tarea_model.dart';
+import 'package:ultimateproject/providers/hive_providers/tarea_provider.dart';
 
 class GestionarTarea extends StatefulWidget {
 
@@ -10,10 +12,36 @@ class _GestionarTareaState extends State<GestionarTarea> {
 
   var _formKey =  GlobalKey<FormState>();
 
+  List<Tarea> listaTareas = [];
+
+
+  TareaOperations tareasOperations = TareaOperations();
+
+final TextEditingController name_controller = TextEditingController();
+final TextEditingController job_controller  = TextEditingController();
+
+
+final TextEditingController delete_controller  = TextEditingController();
+final TextEditingController buscar_controller  = TextEditingController();
+
+@override
+void dispose() {
+  name_controller.dispose();
+  job_controller.dispose();
+  super.dispose();
+}
+
+Future<void> getData()async{
+    listaTareas = await tareasOperations.tareasList;
+
+   // setState(() {});
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+     /* appBar: AppBar(
         title: Text('Gestionar Tarea'),
         actions: [
           Row(
@@ -57,7 +85,7 @@ class _GestionarTareaState extends State<GestionarTarea> {
             ],
           )
         ],
-      ),
+      ),*/
       body: Column(
         children: [
           SingleChildScrollView(
@@ -71,6 +99,7 @@ class _GestionarTareaState extends State<GestionarTarea> {
                       SizedBox(height: 30,),
                       
                       TextFormField(
+                        controller: job_controller,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -87,6 +116,7 @@ class _GestionarTareaState extends State<GestionarTarea> {
                         height: 20,
                       ),
                       TextFormField(
+                        controller: name_controller,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -106,12 +136,46 @@ class _GestionarTareaState extends State<GestionarTarea> {
           ),
           SizedBox( height: 150,),
           Container(
-            padding: EdgeInsets.only(left: 400),
+            padding: EdgeInsets.only(left: 150),
             child: Row(
               children: [
-                ElevatedButton.icon(onPressed: (){}, icon: Icon(Icons.add), label: Text('ADD')),
+                ElevatedButton.icon(onPressed: ()async{
+                  if (_formKey.currentState!.validate()) {
+                    await tareasOperations.saveTarea(Tarea(name: name_controller.text, zona: job_controller.text));
+                  }
+                  else{
+                    print('Datos incorrectos');
+                  }
+                  await getData();
+                  clear();
+                  
+                }, 
+                icon: Icon(Icons.add), 
+                label: Text('ADD')
+                ),
+
                 SizedBox(width: 130,),
-                ElevatedButton.icon(onPressed: (){}, icon: Icon(Icons.delete), label: Text('DELETE')),
+                
+                ElevatedButton.icon(onPressed: ()async{
+                     for (var i = 0; i < listaTareas.length; i++) {
+                         if (listaTareas[i].name == delete_controller.text) {
+                           await listaTareas[i].delete();
+                           getData();
+                           delete_controller.text = '';
+                                       
+                                     } 
+                                   }
+                }, 
+                icon: Icon(Icons.delete), 
+                label: Text('DELETE')
+                ),
+
+                SizedBox(width: 130,),
+
+                ElevatedButton.icon(onPressed: (){}, 
+                icon: Icon(Icons.delete), 
+                label: Text('Buscar')
+                ),
                 
                 
               ],          
@@ -120,6 +184,13 @@ class _GestionarTareaState extends State<GestionarTarea> {
         ],
       ),
     );
+  }
+    void clear() {
+    name_controller.text = '' ;
+    job_controller.text = '';
+    setState(() {
+      
+    });
   }
 }
 
