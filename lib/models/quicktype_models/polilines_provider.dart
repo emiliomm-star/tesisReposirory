@@ -25,8 +25,8 @@ class Hints {
         required this.visitedNodesAverage,
     });
 
-    final int? visitedNodesSum;
-    final int? visitedNodesAverage;
+    final double visitedNodesSum;
+    final double visitedNodesAverage;
 
     factory Hints.fromJson(Map<String, dynamic> json){ 
         return Hints(
@@ -44,7 +44,7 @@ class Info {
     });
 
     final List<String> copyrights;
-    final int? took;
+    final double took;
 
     factory Info.fromJson(Map<String, dynamic> json){ 
         return Info(

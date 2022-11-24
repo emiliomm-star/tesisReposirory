@@ -3,7 +3,7 @@
 // ignore_for_file: unused_import, prefer_const_constructors, avoid_print, non_constant_identifier_names, avoid_unnecessary_containers, unused_local_variable, unused_element, unnecessary_brace_in_string_interps, prefer_adjacent_string_concatenation
 
 import 'dart:convert';
-import 'dart:html';
+//import 'dart:html';
 
 
 import 'package:dijkstra/dijkstra.dart';
@@ -54,6 +54,7 @@ List<LatLng> becomedCoordinates = [] ;
 List<LatLng> ultimate = [];
 List<LatLng> asd = [];
 List<LatLng> ultimateGetRoute = [];
+
 
 
 
@@ -147,11 +148,12 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
 
             PolylineLayer(
               polylines: [
-                new Polyline(
-                  points: ultimate,
-                  color: Colors.black,
+                 Polyline(
+                  points: ultimateGetRoute,
+                  color: Colors.blue,
                   strokeWidth: 5
-                  )
+                  ),
+                  //Polyline(points: points)
               ],
             )
 
@@ -174,10 +176,12 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
          // await _getCurrentLocation();
           
           setState(() {
+            
             markers.add(_AsignedMarker());
             mapController.move(
               LatLng(_currentPosition.latitude, _currentPosition.longitude) , 
-              10,
+              16.0,
+              
               
               );
           });
@@ -244,7 +248,7 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
                         
                        List<LatLng> copylist = points;
                       
-                        List<double> distancePoints = [];
+                        List<List> distancePoints = [];
 
                         List<int> visits = [];
 
@@ -271,7 +275,13 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
                                 print('Este punto ha sido visitado en copylist');
                               } 
                               else{
-                             distancePoints.add(distance.as(LengthUnit.Meter, LatLng(points[i].latitude, points[i].longitude), LatLng(copylist[j].latitude, copylist[j].longitude)) );
+                                /*Garegar a distancePonits la lista de las distancias entre el valor fijo actual 
+                                de i y el valor volatil de j ademas de agregar las posiciones de los elementos 
+                                en copylist a medida q se van encontrando */
+                             distancePoints.add([distance.as(LengthUnit.Meter, LatLng(points[i].latitude, points[i].longitude), LatLng(copylist[j].latitude, copylist[j].longitude)), 
+                             points.indexOf(LatLng(copylist[j].latitude, copylist[j].longitude)) ]
+                             );
+                            
                              print('Calculando distancia entre ${LatLng(points[i].latitude, points[i].longitude)} y el valor ${LatLng(copylist[j].latitude, copylist[j].longitude)}');
                             // var distanceBetweenPoints = SphericalUtil.computeDistanceBetween(LatLng(points[i].latitude, points[i].longitude), LatLng(copylist[j].latitude, copylist[j].longitude));
                              print(distancePoints.toList()); // distancia en metros
@@ -284,16 +294,16 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
                        
                           }
                           
-                           visits.add(points.indexOf(points[resultDistances[1]+1]));
+                           visits.add(points.indexOf(points[resultDistances[1]]));
                            print(visits.toList());
  
-                           ultimate.add(points[resultDistances[1]+1]);
+                           ultimate.add(points[resultDistances[1]]);
                           
                            print('Lista definitiva : \n ${ultimate.toList()}');
                          
                            print(copylist.toList());
 
-                           i = points.indexOf(points[resultDistances[1]+1])-1;
+                           i = points.indexOf(points[resultDistances[1]])-1;
                            while (resultDistances.isNotEmpty) {
                             resultDistances.remove(resultDistances.first);
                             }
@@ -317,16 +327,23 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
   
                       }
                       , 
-                    child: Icon(Icons.arrow_upward),),
+                    child: Icon(Icons.merge_type),),
 
                     SizedBox(height: 5,),
 
                     FloatingActionButton(
                       onPressed: ()async{
 
+                        List<String> puntosStrings = [];
+
+                        //'${ultimate[0].latitude},${ultimate[0].longitude}', '${ultimate[1].latitude},${ultimate[1].longitude}', '${ultimate[2].latitude},${ultimate[2].longitude}', '${ultimate[3].latitude},${ultimate[3].longitude}', '${ultimate[4].latitude},${ultimate[4].longitude}'
+
+                       
+
                           var url = Uri.https('graphhopper.com', 'api/1/route',{
                                   'key'            : '94e8d176-888f-48c0-9248-3381ce17ee57',
                                   'point'          :  metoths.latlngMakeString(ultimate),          //['-51.131,12.414', '48.224,3.867'],
+                                 // 'algorithm'      :  'alternative_route',
                                   'profile'        : 'car',
                                   'locale'         : 'de',
                                  // 'calc_points'    : true,
@@ -337,13 +354,20 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
 
                           final response = await http.get(url);
                           final decodedData = await json.decode(response.body);
-                          final polylinesPoints = PolilinesProvider.fromJson(decodedData as Map<String , dynamic>);
+                          final polylinesPoints =  PolilinesProvider.fromJson(decodedData as Map<String , dynamic>);
 
                           if (response.statusCode != 200) {
                              print('error'); 
                            }
                             
                             print('Lista proveedora de puntos para polylines : \n'  +  '${polylinesPoints.paths.first.points!.coordinates.toList()}');
+
+                            List<List<double>> listListaAux = polylinesPoints.paths.first.points!.coordinates.toList();
+
+                           // print('Lista proveedora de puntos para polylines convertida a LatLng: \n'  +  '${metoths.listListToListLatLng(listListaAux)}');
+
+                            
+                            
 
                        /* Map<String, dynamic> payload = 
                         {
@@ -367,9 +391,15 @@ var url = Uri.parse('https://api.openrouteservice.org/v2/directions/driving-car?
                       else{
                         print('Algo salio mal');
                       }*/
-
+                          setState(() {
+                            ultimateGetRoute.add(points[0]);
+                            ultimateGetRoute = metoths.listListToListLatLng(listListaAux);
+                            
+                          print(ultimateGetRoute);
+                          });
+                          
                       },
-                      child: Icon(Icons.bedroom_child_outlined),
+                      child: Icon(Icons.show_chart),
                       ),
      
                    ],

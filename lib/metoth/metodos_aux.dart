@@ -8,19 +8,21 @@ class AuxMetoth {
 
 
  // ignore: non_constant_identifier_names
- List <double> SearchMinor(List<double> Lista ){
+ List <double> SearchMinor(List<List> Lista ){
 
     
     List <double> minorPos = [];
     double minor = 999999999999999;
+    double pos = 0;
     for (var i = 0; i < Lista.length; i++) {
-      if (Lista[i] < minor) {
-        minor = Lista[i];
+      if (Lista[i].first < minor) {
+        minor = Lista[i].first;
+        pos = Lista[i].last;
       }
       
     }
     minorPos.add(minor);
-    minorPos.add(Lista.indexOf(minor).toDouble()); 
+    minorPos.add(pos); 
     return minorPos;
   }
  List<double> searchMajor(List<double> Lista ){
@@ -42,11 +44,23 @@ class AuxMetoth {
   List<String> latlngMakeString(List<LatLng> list){
     List<String> listAux = []; 
     for (var i = 0; i < list.length; i++) {
-      listAux.add('${list[i].latitude},${list[i].longitude}');
-
-      
+      listAux.add('${list[i].latitude.toString()},${list[i].longitude.toString()}');
     }
     return listAux;
+  }
+
+  List<LatLng> listListToListLatLng(List<List<double>> listOfList){
+     // List<double> listResultante      = [];
+      List<LatLng> listResultanteFinal = [];
+       for (var i = 0; i < listOfList.length; i++) {
+        listResultanteFinal.add(LatLng(listOfList[i].last,listOfList[i].first));
+        //  listResultanteFinal[i].latitude = listOfList[i].first;
+        //  listResultanteFinal[i].longitude = listOfList[i].last;
+
+        
+       }
+       return listResultanteFinal;
+       
   }
 
   
