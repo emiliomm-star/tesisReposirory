@@ -55,7 +55,7 @@ class _DashboardViewState extends State<DashboardView> {
          icon: Icon(Icons.list)
          )
         ],
-  builder: () {
+  builder: (parameters) {
     return GestionarChofer();
   },
   icon: const Icon(Icons.person),
@@ -71,7 +71,7 @@ class _DashboardViewState extends State<DashboardView> {
          }), icon: Icon(Icons.list))
         ],
        
-  builder: () {
+  builder: (parameters) {
     return GestionarTarea();
   },
   icon: const Icon(Icons.play_for_work),
@@ -86,7 +86,7 @@ class _DashboardViewState extends State<DashboardView> {
          }), icon: Icon(Icons.list))
         ],
         
-  builder: () {
+  builder: (parameters) {
     return GestionarVehiculo();
   },
   icon: const Icon(Icons.airport_shuttle),
@@ -97,7 +97,7 @@ class _DashboardViewState extends State<DashboardView> {
   
   label: 'Mostrar Reportes', 
   id: 'Greporte_id', 
-  builder: (){
+  builder: (parameters){
     return ReportView();
   }, 
   icon: Icon(Icons.report)
